@@ -3,7 +3,7 @@
  * The background color of most components is set in the FXML file.
  */
 
-/*Basic button styling */
+/*General button styling */
 .button:hover {
 	-fx-scale-y: 1.05;
 	-fx-scale-x: 1.05;
@@ -42,6 +42,8 @@
 	-fx-background-color: black;
 	-fx-text-fill: #f2f2f2;
 	-fx-font-size: 16pt;
+	-fx-font-size: 24;
+	-fx-font-weight: 500;
 }
 
 .menu-item:hover {
@@ -52,4 +54,27 @@
 .context-menu {
 	-fx-background-color: black;
 	-fx-opacity: 0.9;
+}
+
+#openFileItem > .label {
+	-fx-graphic: url("icons/OpenFileIcon.png");
+	-fx-graphic-text-gap: 15;
+}
+
+#saveAsItem > .label {
+	-fx-graphic: url("icons/SaveAsIcon.png");
+	-fx-graphic-text-gap: 15;
+}
+
+#helpItem > .label {
+	-fx-graphic: url("icons/HelpIcon.png");
+	-fx-graphic-text-gap: 15;
+}
+
+#resizeSlider .thumb {
+	-fx-background-color: #f2f2f2;
+}
+
+#resizeSlider .track {
+	-fx-control-inner-background: black;
 }

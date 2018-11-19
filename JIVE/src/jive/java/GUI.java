@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -13,9 +14,12 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -31,66 +35,79 @@ import javafx.stage.Stage;
  */
 public class GUI
 {	
-	final List<String> COMPATIBLE_FORMATS = Arrays.asList("jpg", "png", "bmp", "gif");
+	final List<String> COMPATIBLE_FORMATS = Arrays.asList("*.jpg", "*.png", "*.bmp", "*.gif");
 	
 	Stage stage;
 	ImageViewer imageViewer;
+	CropSelector cropSelector;
 	Project project;
+	boolean redoAvailable = false;	//Redo is only available immediately after the undo function is used
 	
 	@FXML
-	private AnchorPane mainPane;
-	
+	private AnchorPane mainPane;	
 	@FXML
 	private AnchorPane viewerPane;
-	
+	@FXML
+	private StackPane functionPane;
+	@FXML
+	private HBox editingBox;
+	@FXML
+	private HBox cropBox;
+	@FXML
+	private HBox resizeBox;
 	@FXML
 	private MenuItem saveAsItem;
-	
 	@FXML
 	private Button saveButton;
-	
 	@FXML
 	private Button undoButton;
-	
 	@FXML
 	private Button redoButton;
-	
 	@FXML
 	private Button rotateRightButton;
-	
 	@FXML
 	private Button rotateLeftButton;
-	
 	@FXML
 	private Button flipHorizontalButton;
-	
 	@FXML
 	private Button flipVerticalButton;
-	
 	@FXML
 	private Button cropButton;
-	
 	@FXML
 	private Button resizeButton;
-	
 	@FXML
 	private Button editMetadataButton;
-	
+	@FXML
+	private Button confirmCropButton;
+	@FXML
+	private Button cancelCropButton;
+	@FXML
+	private Button confirmResizeButton;
+	@FXML
+	private Button cancelResizeButton;
+	@FXML
+	private Slider resizeSlider;
 	@FXML
 	private Label nameLabel;
-	
 	@FXML
 	private Label sizeLabel;
+	@FXML
+	private Label resizePercentLabel;
+	@FXML
+	private Label newDimensionsLabel;
 	
 	public void initialize()
 	{		
 		imageViewer = new ImageViewer();
 		viewerPane.getChildren().add(imageViewer);
 		
-		AnchorPane.setTopAnchor(imageViewer, 0.0);			//Anchor the imageViewer node to the viewerPane to resize the imageViewer with the stage
+		//Anchor the imageViewer node to the viewerPane to resize the imageViewer with the stage
+		AnchorPane.setTopAnchor(imageViewer, 0.0);
 		AnchorPane.setRightAnchor(imageViewer, 0.0);
 		AnchorPane.setLeftAnchor(imageViewer, 0.0);
 		AnchorPane.setBottomAnchor(imageViewer, 0.0);
+		
+		resizeSlider.valueProperty().addListener(sliderListener);
 	}
 		
 	@FXML void openFileAction()
@@ -98,12 +115,37 @@ public class GUI
 		openFile();
 	}
 	
-	//TODO:
 	@FXML void saveAsAction() 
 	{
-		//Not sure how to do this
-		//Need to get file name and type from user
-		//then call imageEditor.saveAs(fileName, fileType)?
+		String currFileExt = "*." + project.getFileExtension();
+		FileChooser fileChooser = new FileChooser();
+		
+		//Filters appear in the order they are added, so the current extension is added first
+		FileChooser.ExtensionFilter filter;
+		filter = new FileChooser.ExtensionFilter(currFileExt, currFileExt);
+		fileChooser.getExtensionFilters().add(filter);
+		
+		for (String ext : COMPATIBLE_FORMATS)
+		{
+			if (!ext.equals(currFileExt))
+			{
+				filter = new FileChooser.ExtensionFilter(ext, ext);
+				fileChooser.getExtensionFilters().add(filter);
+			}
+		}
+		
+		fileChooser.setTitle("JIVE - Save As");
+		fileChooser.setInitialFileName(project.getName());
+		
+		File savedFile = fileChooser.showSaveDialog(stage);
+		
+		if (savedFile != null)
+		{	
+			if (project.saveAs(savedFile))
+				updateGUI();
+			else
+				createAlert("Error: could not save image");
+		}		
 	}
 	
 	//TODO:
@@ -115,23 +157,27 @@ public class GUI
 	
 	@FXML void saveButtonAction() 
 	{
-		project.save();
-		saveButton.setDisable(true);
+		if (project.save())
+			updateGUI();
+		else
+			createAlert("Error: could not save image");
 	}
 	
 	@FXML void undoButtonAction() 
 	{
-		BufferedImage image = project.undo();
-		imageViewer.update(SwingFXUtils.toFXImage(image, null));
+		BufferedImage newImage = project.undo();
+		imageViewer.update(SwingFXUtils.toFXImage(newImage, null));
 		project.setHasUnsavedChanges(true);
+		redoAvailable = true;
 		updateGUI();
 	}
 	
 	@FXML void redoButtonAction() 
 	{
-		BufferedImage image = project.redo();
-		imageViewer.update(SwingFXUtils.toFXImage(image, null));
+		BufferedImage newImage = project.redo();
+		imageViewer.update(SwingFXUtils.toFXImage(newImage, null));
 		project.setHasUnsavedChanges(true);
+		redoAvailable = true;
 		updateGUI();
 	}
 	
@@ -141,6 +187,7 @@ public class GUI
 		BufferedImage newImage = project.rotateRight();
 		imageViewer.update(SwingFXUtils.toFXImage(newImage, null));
 		project.setHasUnsavedChanges(true);
+		redoAvailable = false;
 		updateGUI();
 	}
 	
@@ -150,6 +197,7 @@ public class GUI
 		BufferedImage newImage = project.rotateLeft();
 		imageViewer.update(SwingFXUtils.toFXImage(newImage, null));
 		project.setHasUnsavedChanges(true);
+		redoAvailable = false;
 		updateGUI();
 	}
 	
@@ -159,6 +207,7 @@ public class GUI
 		BufferedImage newImage = project.flipHorizontal();
 		imageViewer.update(SwingFXUtils.toFXImage(newImage, null));
 		project.setHasUnsavedChanges(true);
+		redoAvailable = false;
 		updateGUI();
 	}
 	
@@ -168,19 +217,61 @@ public class GUI
 		BufferedImage newImage = project.flipVertical();
 		imageViewer.update(SwingFXUtils.toFXImage(newImage, null));
 		project.setHasUnsavedChanges(true);
+		redoAvailable = false;
 		updateGUI();
 	}
 	
-	//TODO:
 	@FXML void cropAction() 
 	{
-		
+		cropBox.toFront();
+		cropSelector = new CropSelector(imageViewer, imageViewer.imageView, confirmCropButton);
 	}
 	
-	//TODO:
+	@FXML void confirmCropAction()
+	{
+		project.storeState();
+		int x = cropSelector.getCropX();
+		int y = cropSelector.getCropY();
+		int width = cropSelector.getCropWidth();
+		int height = cropSelector.getCropHeight();
+		BufferedImage newImage = project.crop(x, y, width, height);
+		imageViewer.update(SwingFXUtils.toFXImage(newImage, null));
+		project.setHasUnsavedChanges(true);
+		redoAvailable = false;
+		updateGUI();
+		cropSelector.remove();
+		editingBox.toFront();
+	}
+	
+	@FXML void cancelCropAction()
+	{
+		editingBox.toFront();
+		cropSelector.remove();
+	}
+	
 	@FXML void resizeAction() 
 	{
-		
+		resizeSlider.setValue(resizeSlider.getMax());
+		confirmResizeButton.setDisable(true);
+		resizeBox.toFront();
+	}
+	
+	@FXML void confirmResizeAction()
+	{
+		project.storeState();
+		double percentage = Math.round(resizeSlider.getValue());
+		double scaleFactor = percentage / 100;
+		BufferedImage newImage = project.resize(scaleFactor);
+		imageViewer.update(SwingFXUtils.toFXImage(newImage, null));
+		project.setHasUnsavedChanges(true);
+		redoAvailable = false;
+		updateGUI();
+		editingBox.toFront();
+	}
+	
+	@FXML void cancelResizeAction()
+	{
+		editingBox.toFront();
 	}
 	
 	//TODO:
@@ -190,31 +281,36 @@ public class GUI
 	}
 		
 	/*
-	 * This function opens a user-selected image file for viewing and editing
+	 * This function allows the user to select an image file for viewing and editing
 	 */
-	public void openFile()
+	private void openFile()
 	{
 		FileChooser fileChooser = new FileChooser();
-		FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.png", "*.bmp", "*.gif");
+		
+		FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Image Files", COMPATIBLE_FORMATS);
 		fileChooser.getExtensionFilters().add(filter);
+		
+		for (String ext : COMPATIBLE_FORMATS)
+		{
+			filter = new FileChooser.ExtensionFilter(ext, ext);
+			fileChooser.getExtensionFilters().add(filter);
+		}
+		
+		fileChooser.setTitle("JIVE - Open an Image");
 		File imageFile = fileChooser.showOpenDialog(stage);
 				
 		if (imageFile != null)
 		{
 			Image image;
 			
-			String fileName = imageFile.getName();							//Users can enter non-image files manually, so additional validation is done here
+			//Users can enter non-image files manually, so additional validation is done here
+			String fileName = imageFile.getName();
 			int extensionIndex = fileName.lastIndexOf(".");
 			String extension = fileName.substring(extensionIndex + 1);
 			
-			if (!(COMPATIBLE_FORMATS.contains(extension)))
+			if (!(COMPATIBLE_FORMATS.contains("*." + extension)))
 			{
-				Alert alert = new Alert(AlertType.ERROR, "JIVE does not support ." + extension + " files.");	//This could be improved to look more modern
-				alert.setHeaderText(null);
-				GaussianBlur blur = new GaussianBlur(5);
-				mainPane.setEffect(blur);
-				alert.showAndWait();
-				mainPane.setEffect(null);
+				createAlert("JIVE does not support ." + extension + " files.");
 				return;
 			}
 			
@@ -227,10 +323,16 @@ public class GUI
 			}
 			catch (IOException e)
 			{
-				// TODO: Graphically handle failure
 				e.printStackTrace();
+				imageViewer.update(null);
+				project = null;
+				createAlert("Error: could not read image file.");
+				return;				
 			}
 			
+			editingBox.toFront();
+			redoAvailable = false;
+			saveAsItem.setDisable(false);
 			rotateRightButton.setDisable(false);
 			rotateLeftButton.setDisable(false);
 			flipHorizontalButton.setDisable(false);
@@ -238,27 +340,29 @@ public class GUI
 			cropButton.setDisable(false);
 			resizeButton.setDisable(false);
 			editMetadataButton.setDisable(false);
+			
+			if (cropSelector != null)
+				cropSelector.remove();
 		}
 	}
 	
 	/**
-	 * This function updates the labels and buttons as appropriate
+	 * This function updates the GUI's labels and buttons as appropriate
 	 * It should be called after any change is made to the GUI, Project, or ImageViewer
 	 */
-	public void updateGUI()
+	private void updateGUI()
 	{
 		sizeLabel.setText(project.getWidth() + " x " + project.getHeight());
-		
+		newDimensionsLabel.setText(project.getWidth() + " x " + project.getHeight());
+				
 		if (project.hasUnsavedChanges())
 		{
 			saveButton.setDisable(false);
-			saveAsItem.setDisable(false);
 			nameLabel.setText(project.getName() + "*");
 		}
 		else
 		{
 			saveButton.setDisable(true);
-			saveAsItem.setDisable(true);
 			nameLabel.setText(project.getName());
 		}
 		
@@ -267,10 +371,27 @@ public class GUI
 		else
 			undoButton.setDisable(false);
 		
+		if (!redoAvailable)
+			project.clearUndoHistory();
+			
 		if (project.undoHistoryIsEmpty())
 			redoButton.setDisable(true);
 		else
 			redoButton.setDisable(false);
+	}
+	
+	/**
+	 * Shows an alert in the GUI
+	 * @param message The text to be shown in the alert
+	 */
+	private void createAlert(String message)
+	{
+		Alert alert = new Alert(AlertType.ERROR, message);
+		alert.setHeaderText(null);
+		GaussianBlur blur = new GaussianBlur(5);
+		mainPane.setEffect(blur);
+		alert.showAndWait();
+		mainPane.setEffect(null);
 	}
 	
 	/**
@@ -280,4 +401,24 @@ public class GUI
 	{
 		this.stage = stage;
 	}
+	
+	/**
+	 * sliderListener updates the percentage label and the new dimensions label
+	 * according to the value of the slider. It also enables or disables the
+	 * confirmResizeButton as appropriate.
+	 */
+	ChangeListener<Number> sliderListener = (observable, oldValue, newValue) -> 
+	{
+		double sliderValue = Math.round(resizeSlider.getValue());
+		double scale = sliderValue / 100;
+		int newWidth = (int) (project.getWidth() * scale);
+		int newHeight = (int) (project.getHeight() * scale);
+		resizePercentLabel.setText(String.valueOf((int) sliderValue) + "%");
+		newDimensionsLabel.setText(newWidth + " x " + newHeight);
+		
+		if (newWidth < 1 || newHeight < 1 || scale == 1)
+			confirmResizeButton.setDisable(true);
+		else
+			confirmResizeButton.setDisable(false);
+	};
 }

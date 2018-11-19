@@ -1,14 +1,12 @@
 package jive.java;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
-
-//TODO: Large BufferedImages use a lot of memory (7680 x 1200 is about 36mb), it might be better to store editing history as strings
-//		or limit undo/redo to some number of actions.
 
 /**
  * Project consists of methods to edit BufferedImage objects and manage editing projects.
@@ -30,6 +28,7 @@ import javax.imageio.ImageIO;
 public class Project extends ImageEditor
 {
 	private File imageFile;
+	private String fileExtension;
 	private Stack<BufferedImage> stateHistory;
 	private Stack<BufferedImage> undoHistory;	
 	private boolean hasUnsavedChanges;
@@ -43,27 +42,72 @@ public class Project extends ImageEditor
 		super(ImageIO.read(imageFile));
 		
 		this.imageFile = imageFile;
+		
+		fileExtension = findFileExtension(imageFile);				
 		stateHistory = new Stack<BufferedImage>();
 		undoHistory = new Stack<BufferedImage>();
 		hasUnsavedChanges = false;
 	}
 	
-	//TODO: implement this function
+	/**
+	 * Saves the Project's BufferedImage object to disk
+	 * This function overwrites the bufferedImage's original file.
+	 * @return True if successful, false otherwise
+	 */
 	public boolean save()
 	{
-		//write buffered image to file
-		//hasUnsavedChanges = false;
-		//if successful
-		return true;
+		try
+		{
+			ImageIO.write(bufferedImage, fileExtension, imageFile);
+			hasUnsavedChanges = false;
+			return true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
-	//TODO: implement this function
-	public boolean saveAs(String fileName, String fileType)
+	/**
+	 * Saves the Project's BufferedImage object to a new file.
+	 * Images can be converted between JPG, PNG, BMP, and GIF.
+	 * 
+	 * The alpha channel is removed and the image is drawn to
+	 * a white background if the new file type doesn't support transparency.
+	 * 
+	 * @param newFile The destination file of the bufferedImage
+	 * @return True if successful, false otherwise.
+	 */
+	public boolean saveAs(File newFile)
 	{
-		//save buffered image as a specified file type
-		//hasUnsavedChanges = false;
-		//if successful
-		return true;
+		String newFileExtension = findFileExtension(newFile);
+		boolean hasAlphaChannel = bufferedImage.getColorModel().hasAlpha();
+		
+		try
+		{
+			if (hasAlphaChannel && (newFileExtension.equals("jpg") | newFileExtension.equals("bmp")))
+			{				
+				int width = bufferedImage.getWidth();
+				int height = bufferedImage.getHeight();
+				BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+				newImage.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null);
+				
+				ImageIO.write(newImage, newFileExtension, newFile);
+				newImage.flush();
+			}
+			else
+			{
+				ImageIO.write(bufferedImage, newFileExtension, newFile);
+			}
+			
+			return true;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	/**
@@ -116,6 +160,14 @@ public class Project extends ImageEditor
 	}
 	
 	/**
+	 * Empties the undoHistory stack
+	 */
+	public void clearUndoHistory()
+	{
+		undoHistory.clear();
+	}
+	
+	/**
 	 * Check if the project has unsaved changes
 	 * @return true if it has unsaved changes, false otherwise
 	 */
@@ -140,5 +192,27 @@ public class Project extends ImageEditor
 	public void setHasUnsavedChanges(boolean unsavedChanges)
 	{
 		hasUnsavedChanges = unsavedChanges;
+	}
+	
+	/**
+	 * Get the file extension as a String
+	 * @return The file extension of the current project
+	 */
+	public String getFileExtension()
+	{
+		return fileExtension;
+	}
+	
+	/**
+	 * Gets the file extension of a file
+	 * @param file A File object
+	 * @return The extension of the file
+	 */
+	private String findFileExtension(File file)
+	{
+		String fileName = file.getName();
+		int extensionIndex = fileName.lastIndexOf(".");
+		String extension = fileName.substring(extensionIndex + 1);
+		return extension;
 	}
 }

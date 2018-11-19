@@ -5,10 +5,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 
-//TODO: Fix memory leak caused by Image object
-//2 problems: Image objects are not picked up by garbage collection (Known bug) and
-//			  each pixel of an image uses 4 bytes of memory
-
 /**
  * ImageViewer displays JavaFX images in a BorderPane.
  * Images are centered and resized if necessary.
