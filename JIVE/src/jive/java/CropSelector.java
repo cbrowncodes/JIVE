@@ -25,6 +25,8 @@ import javafx.scene.shape.StrokeLineCap;
  * 
  * This class also enables and disables the confirmCropButton as appropriate.
  * 
+ * (Requirement 2.3.2)
+ * 
  * @author Devon Hunter
  *
  */
@@ -63,8 +65,8 @@ public class CropSelector
         pane.addEventHandler(MouseEvent.MOUSE_PRESSED, mousePressEvent);
         pane.addEventHandler(MouseEvent.MOUSE_DRAGGED, mouseDragEvent);
         pane.addEventHandler(MouseEvent.MOUSE_RELEASED, mouseReleaseEvent);
-        pane.widthProperty().addListener(listener);
-        pane.heightProperty().addListener(listener);
+        pane.widthProperty().addListener(sizeListener);
+        pane.heightProperty().addListener(sizeListener);
         
         rectangle = new Rectangle();
         rectangle.setStroke(Color.ROYALBLUE);
@@ -85,6 +87,7 @@ public class CropSelector
         displayHeight = Math.min(image.getFitHeight(), image.getFitWidth() / aspectRatio);
     }
     
+    //Store the starting X, Y coordinates when the mouse is pressed
     EventHandler<MouseEvent> mousePressEvent = new EventHandler<MouseEvent>()
     {
         @Override
@@ -99,9 +102,11 @@ public class CropSelector
             
             bounds = image.getBoundsInParent();
             
+            //illegalStart is used to stop mouseDragEvent from drawing a rectangle
+            //that is started outside of the imageView
             if (!bounds.contains(event.getX(), event.getY()))
             {
-            	illegalStart = true;	//illegalStart is used to stop mouseDragEvent from drawing a rectangle
+            	illegalStart = true;
             	rectangle.setWidth(0);
             	rectangle.setHeight(0);
             	return;
@@ -111,6 +116,7 @@ public class CropSelector
             	illegalStart = false;
             }
             
+            //Adjust bounds if they have changed
             if (rectangleMinBoundX != bounds.getMinX() || rectangleMinBoundY != bounds.getMinY())
             {	
             	rectangleMinBoundX = bounds.getMinX();
@@ -131,6 +137,7 @@ public class CropSelector
         }
     };
 
+    //Adjust the rectangle size as the mouse is dragged
     EventHandler<MouseEvent> mouseDragEvent = new EventHandler<MouseEvent>()
     {
         @Override
@@ -179,6 +186,7 @@ public class CropSelector
         }
     };
 
+    //Calculate and store the crop area when the mouse is released 
     EventHandler<MouseEvent> mouseReleaseEvent = new EventHandler<MouseEvent>()
     {
         @Override
@@ -219,7 +227,8 @@ public class CropSelector
         }
     };
     
-    ChangeListener<Number> listener = (observable, oldValue, newValue) -> 
+    //Actions performed during window resizing when the crop selector is enabled
+    ChangeListener<Number> sizeListener = (observable, oldValue, newValue) -> 
     {
     	pane.getChildren().remove(rectangle);
     	confirmButton.setDisable(true);
@@ -229,6 +238,7 @@ public class CropSelector
     
 	/**
 	 * Removes all aspects of the CropSelector from the parent node
+	 * (Requirement 2.3.3)
 	 */
     public void remove()
     {
@@ -244,6 +254,8 @@ public class CropSelector
      * The value of cropX is corrected if images are scaled to fit
      * in the ImageView.
      * 
+     * (Requirement 2.3.4)
+     * 
      * @return The X coordinate of the rectangular crop area
      */
     public int getCropX()
@@ -256,6 +268,8 @@ public class CropSelector
      * 
      * The value of cropY is corrected if images are scaled to fit
      * in the ImageView.
+     * 
+     * (Requirement 2.3.4)
      * 
      * @return The Y coordinate of the rectangular crop area
      */
@@ -270,6 +284,8 @@ public class CropSelector
      * The value of cropWidth is corrected if images are scaled to fit
      * in the ImageView.
      * 
+     * (Requirement 2.3.4)
+     * 
      * @return The width of the rectangular crop area
      */
     public int getCropWidth()
@@ -282,6 +298,8 @@ public class CropSelector
      * 
      * The value of cropHeight is corrected if images are scaled to fit
      * in the ImageView.
+     * 
+     * (Requirement 2.3.4)
      * 
      * @return The height of the rectangular crop area
      */

@@ -8,14 +8,32 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="mainPane" prefHeight="648.0" prefWidth="1152.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jive.java.GUI">
+<AnchorPane fx:id="mainPane" prefHeight="648.0" prefWidth="1152.0" style="-fx-background-color: black;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="jive.java.Controller">
    <children>
-      <AnchorPane fx:id="viewerPane" layoutX="10.0" layoutY="72.0" prefHeight="478.0" prefWidth="1152.0" style="-fx-background-color: black;" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="72.0" />
+      <AnchorPane fx:id="viewerPane" layoutX="10.0" layoutY="72.0" prefHeight="461.0" prefWidth="1132.0" style="-fx-background-color: black;" AnchorPane.bottomAnchor="115.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="72.0" />
+      <Button fx:id="previousButton" disable="true" layoutX="55.0" layoutY="278.0" mnemonicParsing="false" onAction="#previousButtonAction" opacity="0.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="297.0" AnchorPane.leftAnchor="50.0" AnchorPane.topAnchor="278.0">
+         <graphic>
+            <ImageView fitHeight="65.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@icons/PreviousIcon.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <Button fx:id="nextButton" disable="true" layoutX="1042.0" layoutY="278.0" mnemonicParsing="false" onAction="#nextButtonAction" opacity="0.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="297.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="278.0">
+         <graphic>
+            <ImageView fitHeight="65.0" fitWidth="60.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@icons/NextIcon.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
       <AnchorPane fx:id="controlPane" layoutX="5.0" layoutY="-2.0" prefHeight="46.0" prefWidth="1117.0" style="-fx-background-color: black;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <HBox alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="328.0" style="-fx-background-color: black;" AnchorPane.rightAnchor="5.0">
+            <HBox alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="483.0" style="-fx-background-color: black;" AnchorPane.rightAnchor="5.0">
                <children>
-                  <Label fx:id="nameLabel" alignment="CENTER_RIGHT" prefHeight="52.0" prefWidth="187.0" textFill="#f2f2f2">
+                  <Label fx:id="nameLabel" alignment="CENTER_RIGHT" prefHeight="46.0" prefWidth="369.0" textAlignment="RIGHT" textFill="#f2f2f2">
                      <font>
                         <Font name="Gill Sans MT" size="15.0" />
                      </font>
@@ -23,7 +41,7 @@
                         <Insets left="5.0" right="10.0" />
                      </HBox.margin>
                   </Label>
-                  <Label fx:id="sizeLabel" alignment="CENTER_RIGHT" prefHeight="44.0" prefWidth="90.0" textFill="#f2f2f2">
+                  <Label fx:id="sizeLabel" alignment="CENTER_RIGHT" prefHeight="44.0" prefWidth="116.0" textAlignment="RIGHT" textFill="#f2f2f2">
                      <font>
                         <Font name="Gill Sans MT" size="15.0" />
                      </font>
@@ -96,7 +114,7 @@
          <children>
             <HBox fx:id="resizeBox" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: black;">
                <children>
-                  <VBox alignment="CENTER" prefHeight="110.0" prefWidth="122.0">
+                  <VBox alignment="CENTER" prefHeight="110.0" prefWidth="157.0">
                      <children>
                         <Label alignment="CENTER" prefHeight="18.0" prefWidth="130.0" text="New Dimensions:" textFill="#f2f2f2">
                            <font>
@@ -110,11 +128,11 @@
                         </Label>
                      </children>
                      <HBox.margin>
-                        <Insets left="50.0" right="50.0" />
+                        <Insets left="10.0" />
                      </HBox.margin>
                   </VBox>
                   <Slider fx:id="resizeSlider" blockIncrement="1.0" majorTickUnit="1.0" min="1.0" minorTickCount="1" prefHeight="14.0" prefWidth="299.0" snapToTicks="true" value="100.0" />
-                  <Label fx:id="resizePercentLabel" alignment="CENTER" prefHeight="25.0" prefWidth="61.0" text="100%" textFill="#f2f2f2">
+                  <Label fx:id="resizePercentLabel" alignment="CENTER" prefHeight="25.0" prefWidth="54.0" text="100%" textFill="#f2f2f2">
                      <font>
                         <Font name="Gill Sans MT" size="20.0" />
                      </font>
@@ -134,7 +152,7 @@
                         <Tooltip text="Cancel" />
                      </tooltip>
                      <HBox.margin>
-                        <Insets bottom="5.0" left="50.0" right="25.0" top="5.0" />
+                        <Insets bottom="5.0" left="25.0" right="25.0" top="5.0" />
                      </HBox.margin>
                   </Button>
                   <Button fx:id="confirmResizeButton" mnemonicParsing="false" onAction="#confirmResizeAction" prefHeight="85.0" prefWidth="85.0" style="-fx-background-color: black;">
@@ -149,7 +167,7 @@
                         <Tooltip text="Confirm" />
                      </tooltip>
                      <HBox.margin>
-                        <Insets bottom="5.0" left="25.0" right="50.0" top="5.0" />
+                        <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
                      </HBox.margin>
                   </Button>
                </children>
@@ -185,6 +203,97 @@
                      <tooltip>
                         <Tooltip text="Confirm" />
                      </tooltip>
+                  </Button>
+               </children>
+            </HBox>
+            <HBox fx:id="brightnessBox" alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: black;">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="110.0" prefWidth="45.0">
+                     <children>
+                        <ImageView fitHeight="34.0" fitWidth="38.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/BrightnessIcon.png" />
+                           </image>
+                           <VBox.margin>
+                              <Insets bottom="7.0" top="10.0" />
+                           </VBox.margin>
+                        </ImageView>
+                        <ImageView fitHeight="29.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/ContrastIcon.png" />
+                           </image>
+                           <VBox.margin>
+                              <Insets bottom="15.0" top="5.0" />
+                           </VBox.margin>
+                        </ImageView>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="110.0" prefWidth="339.0">
+                     <children>
+                        <Slider fx:id="brightnessSlider" blockIncrement="1.0" majorTickUnit="1.0" max="200.0" minorTickCount="1" snapToTicks="true" value="100.0">
+                           <VBox.margin>
+                              <Insets bottom="15.0" left="10.0" right="10.0" top="15.0" />
+                           </VBox.margin>
+                        </Slider>
+                        <Slider fx:id="contrastSlider" blockIncrement="1.0" majorTickUnit="1.0" max="200.0" minorTickCount="1" snapToTicks="true" value="100.0">
+                           <VBox.margin>
+                              <Insets bottom="15.0" left="10.0" right="10.0" top="15.0" />
+                           </VBox.margin>
+                        </Slider>
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER_LEFT" prefHeight="110.0" prefWidth="42.0">
+                     <children>
+                        <Label fx:id="brightnessLabel" prefHeight="24.0" prefWidth="40.0" text="0" textFill="#f2f2f2">
+                           <VBox.margin>
+                              <Insets bottom="10.0" top="20.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="Gill Sans MT" size="20.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="contrastLabel" prefHeight="24.0" prefWidth="40.0" text="0" textFill="#f2f2f2">
+                           <VBox.margin>
+                              <Insets bottom="20.0" top="10.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font name="Gill Sans MT" size="20.0" />
+                           </font>
+                        </Label>
+                     </children>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </VBox>
+                  <Button fx:id="cancelBrightnessButton" mnemonicParsing="false" onAction="#cancelBrightnessAction" prefHeight="85.0" prefWidth="85.0" style="-fx-background-color: black;">
+                     <graphic>
+                        <ImageView fitHeight="85.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/CancelIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Cancel" />
+                     </tooltip>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="50.0" right="25.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="confirmBrightnessButton" mnemonicParsing="false" onAction="#confirmBrightnessAction" prefHeight="85.0" prefWidth="85.0" style="-fx-background-color: black;">
+                     <graphic>
+                        <ImageView fitHeight="85.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@icons/ConfirmIcon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Confirm" />
+                     </tooltip>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="25.0" right="50.0" top="5.0" />
+                     </HBox.margin>
                   </Button>
                </children>
             </HBox>
@@ -280,19 +389,19 @@
                         <Tooltip text="Resize" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="editMetadataButton" disable="true" layoutX="851.0" layoutY="40.0" mnemonicParsing="false" onAction="#editMetadataAction" prefHeight="85.0" prefWidth="85.0" style="-fx-background-color: black;">
+                  <Button fx:id="editBrightnessButton" disable="true" layoutX="851.0" layoutY="40.0" mnemonicParsing="false" onAction="#editBrightnessAction" prefHeight="85.0" prefWidth="85.0" style="-fx-background-color: black;">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                      <graphic>
                         <ImageView fitHeight="85.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@icons/MetadataIcon.png" />
+                              <Image url="@icons/BrightnessContrastIcon.png" />
                            </image>
                         </ImageView>
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Edit Metadata" />
+                        <Tooltip text="Brightness/Contrast" />
                      </tooltip>
                   </Button>
                </children>

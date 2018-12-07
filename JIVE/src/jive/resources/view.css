@@ -1,5 +1,5 @@
 /* 
- * This document is used to style the GUI's buttons and menu button.
+ * This document is used to style the GUI's buttons, menu button, and sliders.
  * The background color of most components is set in the FXML file.
  */
 
@@ -71,10 +71,20 @@
 	-fx-graphic-text-gap: 15;
 }
 
-#resizeSlider .thumb {
+/*Slider styling for resize/brightness/contrast functions */
+.slider .thumb {
 	-fx-background-color: #f2f2f2;
 }
 
-#resizeSlider .track {
+.slider .track {
 	-fx-control-inner-background: black;
+}
+
+/*Make previous/next buttons visible on hover */
+#previousButton:hover {
+	-fx-opacity: .8;
+}
+
+#nextButton:hover {
+	-fx-opacity: .8;
 }
