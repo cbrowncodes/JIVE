@@ -31,8 +31,6 @@ import javax.imageio.ImageIO;
  */
 public class Project
 {
-	//private final List<String> COMPATIBLE_FORMATS = Arrays.asList(".jpg", ".png", ".bmp", ".gif");
-	//private final List<String> COMPATIBLE_READ_FORMATS = getReadFileTypes();
 	private final List<String> COMPATIBLE_WRITE_FORMATS = getWriteFileTypes();
 
 	private ImageEditor imageEditor;
@@ -61,14 +59,6 @@ public class Project
 	 * 
 	 * @return True if successful, false otherwise
 	 */
-	/*public List<String> getReadFileTypes() {
-		String readTypes[] = ImageIO.getReaderFormatNames();
-		for(int i=0;i<readTypes.length;i++) {
-			readTypes[i]="*."+readTypes[i];
-		}
-		return new ArrayList<String>(Arrays.asList(readTypes));
-		
-	}*/
 	public List<String> getWriteFileTypes() {
 		String writeTypes[] = ImageIO.getWriterFormatNames();
 		for(int i=0;i<writeTypes.length;i++) {

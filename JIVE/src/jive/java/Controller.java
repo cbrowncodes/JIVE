@@ -41,8 +41,6 @@ import javafx.stage.Stage;
  */
 public class Controller
 {	
-	//private final List<String> COMPATIBLE_FORMATS = Arrays.asList("*.jpg", "*.png", "*.bmp", "*.gif","*.hdr","*.icns","*.jpeg","*.pict","*.psd","*.tiff");
-	//private final List<String> COMPATIBLE_FORMATS = new ArrayList<String>(Arrays.asList(ImageIO.getReaderFormatNames()));
 	private final List<String> COMPATIBLE_READ_FORMATS = getReadFileTypes();
 	private final List<String> COMPATIBLE_WRITE_FORMATS = getWriteFileTypes();
 	
@@ -145,8 +143,11 @@ public class Controller
 		
 		//Filters appear in the order they are added, so the current extension is added first
 		FileChooser.ExtensionFilter filter;
-		filter = new FileChooser.ExtensionFilter(currFileExt, currFileExt);
-		fileChooser.getExtensionFilters().add(filter);
+		if(!readOnly) {
+			filter = new FileChooser.ExtensionFilter(currFileExt, currFileExt);
+			fileChooser.getExtensionFilters().add(filter);
+		}
+		
 		
 		for (String ext : COMPATIBLE_WRITE_FORMATS)
 		{
@@ -416,7 +417,7 @@ public class Controller
 				
 		stage.setOnCloseRequest(event ->
 		{
-			if (project != null && project.hasUnsavedChanges())
+			if (project != null && project.hasUnsavedChanges() && !readOnly)
 				createUnsavedChangesAlert();
 		});
 	}
@@ -472,11 +473,12 @@ public class Controller
 	{
 		try
 		{
-			Image image = new Image(imageFile.toURI().toURL().toExternalForm());
-			imageViewer.update(image);
+			//Image image = new Image(imageFile.toURI().toURL().toExternalForm());
+			//imageViewer.update(image);
 			project = new Project(imageFile);
 			photoReel = new PhotoReel(imageFile);
 			updateGUI();
+			imageViewer.update(SwingFXUtils.toFXImage(project.getImage(), null));
 		}
 		catch (IOException e)
 		{
@@ -515,14 +517,26 @@ public class Controller
 		if (project.hasUnsavedChanges())
 		{
 			saveButton.setDisable(readOnly);
-			nameLabel.setText(project.getName() + "*");
-			stage.setTitle("JIVE - " + project.getName() + "*");
+			if(!readOnly) {
+				nameLabel.setText(project.getName() + "*");
+				stage.setTitle("JIVE - " + project.getName() + "*");
+			}
+			else {
+				nameLabel.setText(project.getName() + " (READ ONLY) *");
+				stage.setTitle("JIVE - " + project.getName() + " (READ ONLY) *");
+			}
 		}
 		else
 		{
 			saveButton.setDisable(true);
-			nameLabel.setText(project.getName());
-			stage.setTitle("JIVE - " + project.getName());
+			if(!readOnly) {
+				nameLabel.setText(project.getName());
+				stage.setTitle("JIVE - " + project.getName());
+			}
+			else {
+				nameLabel.setText(project.getName()+" (READ ONLY)");
+				stage.setTitle("JIVE - " + project.getName() + " (READ ONLY)");
+			}
 		}
 		
 		if (project.isUndoAvailable())
