@@ -3,9 +3,12 @@ package jive.java;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
 
 import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingFXUtils;
@@ -38,8 +41,12 @@ import javafx.stage.Stage;
  */
 public class Controller
 {	
-	private final List<String> COMPATIBLE_FORMATS = Arrays.asList("*.jpg", "*.png", "*.bmp", "*.gif");
+	//private final List<String> COMPATIBLE_FORMATS = Arrays.asList("*.jpg", "*.png", "*.bmp", "*.gif","*.hdr","*.icns","*.jpeg","*.pict","*.psd","*.tiff");
+	//private final List<String> COMPATIBLE_FORMATS = new ArrayList<String>(Arrays.asList(ImageIO.getReaderFormatNames()));
+	private final List<String> COMPATIBLE_READ_FORMATS = getReadFileTypes();
+	private final List<String> COMPATIBLE_WRITE_FORMATS = getWriteFileTypes();
 	
+	boolean readOnly=false;
 	Stage stage;
 	ImageViewer imageViewer;
 	Project project;
@@ -83,11 +90,28 @@ public class Controller
 	@FXML private Label brightnessLabel;
 	@FXML private Label contrastLabel;
 	
+	public List<String> getReadFileTypes() {
+		String readTypes[] = ImageIO.getReaderFormatNames();
+		for(int i=0;i<readTypes.length;i++) {
+			readTypes[i]="*."+readTypes[i];
+		}
+		return new ArrayList<String>(Arrays.asList(readTypes));
+		
+	}
+	public List<String> getWriteFileTypes() {
+		String writeTypes[] = ImageIO.getWriterFormatNames();
+		for(int i=0;i<writeTypes.length;i++) {
+			writeTypes[i]="*."+writeTypes[i];
+		}
+		return new ArrayList<String>(Arrays.asList(writeTypes));
+		
+	}
 	public void initialize()
 	{		
 		userManual = new UserManual();
 		imageViewer = new ImageViewer();
 		viewerPane.getChildren().add(imageViewer);
+		
 		
 		//Anchor the imageViewer node to the viewerPane to resize the imageViewer with the stage
 		AnchorPane.setTopAnchor(imageViewer, 0.0);
@@ -124,7 +148,7 @@ public class Controller
 		filter = new FileChooser.ExtensionFilter(currFileExt, currFileExt);
 		fileChooser.getExtensionFilters().add(filter);
 		
-		for (String ext : COMPATIBLE_FORMATS)
+		for (String ext : COMPATIBLE_WRITE_FORMATS)
 		{
 			if (!ext.equals(currFileExt))
 			{
@@ -405,10 +429,10 @@ public class Controller
 	private void openFile()
 	{
 		FileChooser fileChooser = new FileChooser();		
-		FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Image Files", COMPATIBLE_FORMATS);
+		FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Image Files", COMPATIBLE_READ_FORMATS);
 		fileChooser.getExtensionFilters().add(filter);
 		
-		for (String ext : COMPATIBLE_FORMATS)
+		for (String ext : COMPATIBLE_READ_FORMATS)
 		{
 			filter = new FileChooser.ExtensionFilter(ext, ext);
 			fileChooser.getExtensionFilters().add(filter);
@@ -424,10 +448,13 @@ public class Controller
 			int extensionIndex = fileName.lastIndexOf(".");
 			String extension = fileName.substring(extensionIndex + 1);
 			
-			if (!(COMPATIBLE_FORMATS.contains("*." + extension)))
+			if (!(COMPATIBLE_READ_FORMATS.contains("*." + extension)))
 			{
 				createErrorAlert("JIVE does not support ." + extension + " files.");
 				return;
+			}
+			else if(!(COMPATIBLE_WRITE_FORMATS.contains("*." + extension))) {
+				readOnly=true;
 			}
 			
 			loadFile(imageFile);
@@ -487,7 +514,7 @@ public class Controller
 				
 		if (project.hasUnsavedChanges())
 		{
-			saveButton.setDisable(false);
+			saveButton.setDisable(readOnly);
 			nameLabel.setText(project.getName() + "*");
 			stage.setTitle("JIVE - " + project.getName() + "*");
 		}

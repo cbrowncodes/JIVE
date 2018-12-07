@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
@@ -30,7 +31,9 @@ import javax.imageio.ImageIO;
  */
 public class Project
 {
-	private final List<String> COMPATIBLE_FORMATS = Arrays.asList(".jpg", ".png", ".bmp", ".gif");
+	//private final List<String> COMPATIBLE_FORMATS = Arrays.asList(".jpg", ".png", ".bmp", ".gif");
+	//private final List<String> COMPATIBLE_READ_FORMATS = getReadFileTypes();
+	private final List<String> COMPATIBLE_WRITE_FORMATS = getWriteFileTypes();
 
 	private ImageEditor imageEditor;
 	private BufferedImage bufferedImage;
@@ -58,6 +61,22 @@ public class Project
 	 * 
 	 * @return True if successful, false otherwise
 	 */
+	/*public List<String> getReadFileTypes() {
+		String readTypes[] = ImageIO.getReaderFormatNames();
+		for(int i=0;i<readTypes.length;i++) {
+			readTypes[i]="*."+readTypes[i];
+		}
+		return new ArrayList<String>(Arrays.asList(readTypes));
+		
+	}*/
+	public List<String> getWriteFileTypes() {
+		String writeTypes[] = ImageIO.getWriterFormatNames();
+		for(int i=0;i<writeTypes.length;i++) {
+			writeTypes[i]="*."+writeTypes[i];
+		}
+		return new ArrayList<String>(Arrays.asList(writeTypes));
+		
+	}
 	public boolean save()
 	{
 		try
@@ -90,7 +109,7 @@ public class Project
 		String newFileExtension = findFileExtension(newFile);
 		boolean hasAlphaChannel = bufferedImage.getColorModel().hasAlpha();
 				
-		if (!COMPATIBLE_FORMATS.contains("." + newFileExtension))
+		if (!COMPATIBLE_WRITE_FORMATS.contains("*." + newFileExtension)||newFileExtension.equals("WBMP")||newFileExtension.equals("wbmp"))
 			return false;
 		
 		try
