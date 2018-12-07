@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<!--
+	This document is the user manual for JIVE.
+	It is displayed in the application using JavaFX's WebView.
+	Author: Devon Hunter
+	November 18th, 2018
+-->
+<html>
+
+<head>
+	<title> JIVE User Manual </title>
+	<style ="text/css">
+		p, h2 {
+			margin-left: 50px;
+		}		
+		.image {
+			text-align: center;
+		}
+		body {
+			color: #f2f2f2;
+			background-color: black;
+		}
+	</style>
+</head>
+
+<header align="center"> 
+	<h1>Java Image Viewer and Editor (JIVE)</h1>
+	<h1> User Manual</h1>
+	<img src="./icons/JiveIcon.png" alt="JIVE Icon">
+</header>
+
+<body style="margin-left: 20px; margin-right: 10px;">
+	<br>
+	<hr style="border-width:2px">
+	
+	<h1> 1.&nbsp;&nbsp;&nbsp;Getting Started </h1>
+
+		<h2> 1.1. &nbsp;&nbsp;Opening an Image File </h2>
+
+		<p> 
+			To open an image file, select the menu button then select &apos;Open File&apos;, or press Ctrl+O. 
+			The menu button is the only button that is enabled when no image is loaded. 
+			JIVE supports .jpg, .gif, .bmp, and .png files. 
+			Attempting to open any other file type will result in an error message. 
+			<br>
+			<div class="image">
+			<img src="./screenshots/OpenFile.png" width="85%" height="85%">
+			</div>
+		</p>
+
+		<h2> 1.2. &nbsp;&nbsp;Resizing the Window </h2>
+
+		<p> 
+			Window resizing is handled by your operating system, including snap resizing. 
+			If an image is loaded it will be resized as necessary to fit into the viewer. 
+			The aspect ratio will always be preserved.
+		</p>
+		
+		<h2> 1.3. &nbsp;&nbsp;The Photo Reel </h2>
+		
+		<p>
+			After an image is loaded, other image files in the same directory are loaded to the photo reel. The photo reel bypasses the file chooser
+			and loads the next or previous image from the directory into JIVE. Images are loaded in alphabetical order. 
+			The previous or next image can be loaded by pressing Ctrl+Left or Ctrl+Right, respectively. 
+			Or, by using the following buttons:
+			<br>
+			<div class="image">
+			<img src="./icons/PreviousIcon.png" hspace="40">
+			<img src="./icons/NextIcon.png" hspace="40">
+			</div>
+		</p>
+		<p>
+			The buttons are only displayed when the mouse is hovered over them. The relative location is shown below:
+			<br>
+			<div class="image">
+			<img src="./screenshots/PhotoReel.png" width="90%" height="90%">
+			</div>
+		</p>
+		<p>
+			If there are no next or previous pictures, the corresponding button will not be displayed and the keyboard shortcut will be disabled. 
+			If the current image has unsaved changes, you will be prompted to save the changes before the new image is loaded.
+		</p>
+
+		<h2> 1.4. &nbsp;&nbsp;Keyboard Shortcuts </h2>
+
+		<p> 
+			Keyboard shortcuts for certain functions are noted in the relevant sections of this manual. 
+			They are also listed below for reference:
+			<ul style="margin-left: 50px">
+				<li>Ctrl+O: Open a new file</li>
+				<li>Ctrl+S: Save the current project</li>
+				<li>Ctrl+Z: Undo</li>
+				<li>Ctrl+Y: Redo</li>
+				<li>Ctrl+Left: Previous image</li>
+				<li>Ctrl+Right: Next image</li>
+			</ul>
+		</p>
+		
+	<br>
+	<hr style="border-width:2px">
+		
+	<h1> 2.&nbsp;&nbsp;&nbsp;Editing Images </h1>
+	
+		<p> 
+			This section discusses how to use JIVE&apos;s image editing functions. 
+
+			The editing buttons are only enabled after an image is loaded.
+
+			If there is any confusion regarding button function during use, users can hover their mouse over any of the buttons to receive a tooltip specifying the button&apos;s function.
+
+		</p>
+
+		<h2> 2.1. &nbsp;&nbsp;Rotating </h2>
+		
+		<p> 
+			Images can be rotated 90 degrees at a time. Users can rotate an image clockwise or counter-clockwise with these buttons, respectively:
+			<br>
+			<div class="image">
+			<img src="./icons/CwRotateIcon.png" hspace="40">
+			<img src="./icons/CcwRotateIcon.png" hspace="40">
+			</div>
+		</p>
+		
+		<h2> 2.2. &nbsp;&nbsp;Flipping </h2>
+		
+		<p> 
+			Images can be flipped (or mirrored) horizontally and vertically. The flip functions are controlled by the following buttons:
+			<br>
+			<div class="image">
+			<img src="./icons/HorizontalFlipIcon.png" hspace="40">
+			<img src="./icons/VerticalFlipIcon.png" hspace="40">
+			</div>
+		</p>
+		
+		<h2> 2.3. &nbsp;&nbsp;Cropping </h2>
+		
+		<p> 
+			Images can be cropped using the crop tool, which is opened by pressing the crop button:
+			<br>
+			<div class="image">
+			<img src="./icons/CropIcon.png">
+			</div>
+		</p>
+		<p>
+			In the crop tool you can select the area to crop by clicking and dragging your mouse over the image to create a rectangle. The area of the image outside of the blue rectangle will be removed:
+			<br>
+			<div class="image">
+			<img src="./screenshots/CropTool.png" width="90%" height="90%">
+			</div>
+		</p>
+		<p>
+			The following buttons can be used to return to the main editing panel or proceed with the operation:
+			<br>
+			<div class="image">
+			<img src="./icons/CancelIcon.png" hspace="40">
+			<img src="./icons/ConfirmIcon.png" hspace="40">
+			</div>
+		</p>
+		<p>
+			The cancel button (left) can be pressed at any time to exit the crop tool without making changes. 
+			The confirm button (right) will only be enabled when a crop area is selected. 
+			Pressing the confirm button executes the crop operation and exits the crop tool. 
+		</p>
+		
+		<h2> 2.4. &nbsp;&nbsp;Resizing </h2>
+		
+		<p> 
+			Images can be scaled down using the resize tool. Open the tool using the following button:
+			<br>
+			<div class="image">
+			<img src="./icons/ResizeIcon.png">
+			</div>
+		</p>
+		<p>	
+			Use the slider in the resize tool to select the percent to resize by. New image dimensions are previewed under the &quot;New Dimensions:&quot; label:
+			<br>
+			<div class="image">
+			<img src="./screenshots/ResizeTool.png" width="85%" height="85%">
+			</div>
+		</p>
+		<p>
+			Like the crop function above, the cancel button will exit the resize tool without making changes and the confirm button will commence the resize operation. 
+			The confirm button will be disabled if the slider is at 100% or if the new dimensions are less than 1 x 1.
+			<br>
+			<br>
+			<font color="red">NOTE:</font> Resizing images typically results in some loss in quality.
+		</p>
+		
+		<h2> 2.5. &nbsp;&nbsp;Brightness and Contrast </h2>
+		
+		<p> 
+			Image brightness and contrast can be adjusted by clicking this button:
+			<br>
+			<div class="image">
+			<img src="./icons/BrightnessContrastIcon.png">
+			</div>
+		</p>
+		<p>
+			This will display two sliders - the top slider adjusts the brightness and the bottom adjusts contrast. 
+			Brightness and contrast are increased or decreased by moving the sliders to the right or left, respectively.
+			<br>
+			<div class="image">
+			<img src="./screenshots/BrightnessTool.png" width="85%" height="85%">
+			</div>
+		</p>
+		<p>
+			The brightness and contrast adjustments are shown real-time in the image viewer.
+			Similar to the crop and resize functions, the cancel button will cancel the operation and the confirm button will apply the changes.
+		</p>
+		
+	<br>
+	<hr style="border-width:2px">	
+		
+	<h1> 3.&nbsp;&nbsp;&nbsp;Managing Your Changes </h1>
+
+		<h2> 3.1. &nbsp;&nbsp;Undo </h2>
+		
+		<p> 
+			Changes to your project can undone by pressing Ctrl+Z or using the undo button in the upper left-hand corner:
+			<br>
+			<div class="image">
+			<img src="./icons/UndoIcon.png">
+			</div>
+		</p>
+		<p>
+			The history of changes to your project is stored until the program is closed or a new image is opened. 
+			This button is disabled when there are no changes to undo. 
+			&apos;Save As&apos; actions are not stored and cannot be undone.
+		</p>
+		
+		<h2> 3.2. &nbsp;&nbsp;Redo </h2>
+		
+		<p> 
+			Undone changes can be redone with Ctrl+Y or the redo button:
+			<br>
+			<div class="image">
+			<img src="./icons/RedoIcon.png">
+			</div>
+		</p>
+		<p>
+			This button is disabled when there are no changes to redo. 
+			The undo history is only stored immediately after changes are undone. 
+			If a new editing function is performed the undo history is cleared and the redo button is disabled.
+		</p>
+		
+		<h2> 3.3. &nbsp;&nbsp;Save </h2>
+		
+		<p> 
+			Images can be saved using the save button next to the menu button or by pressing Ctrl+S:
+			<br>
+			<div class="image">
+			<img src="./icons/SaveIcon.png">
+			</div>
+		</p>
+		<p>
+			This will save any changes made to the image. The button will be disabled if there are no changes to save. 
+			Once an image is edited, the button will be enabled and an asterisk(*) will be appended to the displayed name. 
+			<br><br>
+			<font color="red">WARNING:</font> This button will always overwrite the image file that is open in JIVE.
+		</p>
+		
+		<h2> 3.4. &nbsp;&nbsp;Save As </h2>
+		
+		<p> 
+			Images can be saved as different names, in different directories, and as different file types using the save as feature:
+			<br>
+			<div class="image">
+			<img src="./screenshots/SaveAs.png" width="85%" height="85%">
+			</div>
+		</p>
+		<p>
+			On-click, JIVE will open a file explorer (Windows 10 shown below):
+			<br>
+			<div class="image">
+			<img src="./screenshots/SaveAsExplorer.png" width="85%" height="85%">
+			</div>
+		</p>
+		<p>
+			You can then navigate to the desired destination directory. 
+			File name can be edited by typing in the text box and file type can be selected using the file-type drop-down list.
+			<br><br>
+			Images can be converted to any of the compatible formats (JPG, PNG, BMP, or GIF).
+			<br><br>
+			The file type can be selected from the drop-down menu or appended to the file name. 
+			For example, entering the file name &quot;image.jpg&quot; will convert the image to a JPG and override the file type in the &quot;Save As Type:&quot; list.
+			If no file extension is appended to the file name, JIVE will save the image as the file type selected in the &quot;Save As Type:&quot; drop-down menu.
+			<br><br>
+			The current image file will stay open in JIVE. The newly saved image will not be opened automatically.
+			<br><br>
+			<font color="red">NOTE:</font> JPGs and BMPs do not support transparency. 
+			If you are converting from a PNG or GIF with transparency, the transparent pixels will be converted to white. 
+			Transparency is preserved when converting between PNG and GIF.
+		</p>
+</body>
+</html>
